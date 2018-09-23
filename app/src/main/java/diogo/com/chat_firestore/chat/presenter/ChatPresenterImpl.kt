@@ -4,8 +4,10 @@ import diogo.com.chat_firestore.AbstractPresenter
 import diogo.com.chat_firestore.chat.view.ChatView
 import diogo.com.chat_firestore.data.chat.ChatRepository
 import diogo.com.chat_firestore.data.chat.Message
+import java.util.*
 
-class ChatPresenterImpl(val chatView: ChatView?, private val chatRepository: ChatRepository) : AbstractPresenter(chatView), ChatPresenter {
+class ChatPresenterImpl(val chatView: ChatView?, private val chatRepository: ChatRepository) : AbstractPresenter(chatView?.getBaseView()), ChatPresenter {
+
 
     private val messageList = mutableListOf<Message>()
 
@@ -17,11 +19,19 @@ class ChatPresenterImpl(val chatView: ChatView?, private val chatRepository: Cha
                         chatView?.showItem(item)
                     }
                 },
-                { error -> chatView?.showMessage(error.message ?: error.localizedMessage) })
+                { error -> chatView?.getBaseView()?.showMessage(error.message ?: error.localizedMessage) })
     }
 
     private fun exist(id: String): Boolean {
         return messageList.find { it.id == id } != null
+    }
+
+
+    override fun sendMessage(message: String, onComplete: (message: Message) -> Unit, onError: (throwable: Throwable) -> Unit) {
+        Thread {
+            val m = Message(message = message, timestamp = Date())
+            if (chatRepository.create(m)) onComplete(m) else onError(Exception("Create Error"))
+        }.start()
     }
 
 }

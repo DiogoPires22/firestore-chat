@@ -4,7 +4,7 @@ import java.util.*
 
 
 data class Message(
-        val id: String,
+        val id: String = "",
         val message: String,
         val timestamp: Date
 //        , val user: String

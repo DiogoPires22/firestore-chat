@@ -4,8 +4,9 @@ import diogo.com.chat_firestore.BaseView
 import diogo.com.chat_firestore.data.chat.Message
 
 
-interface ChatView : BaseView {
+interface ChatView {
 
     fun showItem(item: Message)
+    fun getBaseView(): BaseView
 
 }

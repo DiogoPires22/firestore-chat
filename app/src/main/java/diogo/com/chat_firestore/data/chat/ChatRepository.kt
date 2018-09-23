@@ -3,6 +3,7 @@ package diogo.com.chat_firestore.data.chat
 import com.google.firebase.firestore.*
 import diogo.com.chat_firestore.data.Converter
 import diogo.com.chat_firestore.data.Repository
+import java.util.concurrent.CountDownLatch
 
 
 interface ChatRepository : Repository<Message> {
@@ -17,8 +18,27 @@ class ChatRepositoryImpl(override val converter: Converter<Message>) : ChatRepos
         db = FirebaseFirestore.getInstance()
     }
 
-    override fun create(data: Message) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun create(data: Message): Boolean {
+
+        val latch = CountDownLatch(1)
+
+        var status = false
+
+        val databaseData = converter.toDatabase(data)
+
+        db.collection(Repository.CHAT_COLLECTION).add(databaseData)
+                .addOnSuccessListener {
+                    status = true
+                    latch.countDown()
+                }
+                .addOnFailureListener { e ->
+                    status = false
+                    latch.countDown()
+                }
+
+        latch.await()
+
+        return status
     }
 
     override fun getAll(): List<Message> {

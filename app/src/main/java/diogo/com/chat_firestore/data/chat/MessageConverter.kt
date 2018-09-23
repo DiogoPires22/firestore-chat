@@ -7,7 +7,15 @@ import java.util.*
 
 class MessageConverter : Converter<Message> {
     override fun toDatabase(item: Message): Map<String, Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val map = mutableMapOf<String, Any>()
+
+        with(map) {
+            put(Message.FIELD_MESSAGE, item.message)
+            put(Message.FIELD_TIMESTAMP, item.timestamp)
+            //put(Message.FIELD_USER, item.timestamp)
+        }
+
+        return map
     }
 
     override fun toMemory(item: DocumentSnapshot): Message {
