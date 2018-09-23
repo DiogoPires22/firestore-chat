@@ -7,6 +7,9 @@ import diogo.com.chat_firestore.data.chat.Message
 import diogo.com.chat_firestore.data.chat.MessageConverter
 import org.koin.dsl.module.module
 
+
+
+
 val chatModule = module("chat") {
 
     factory<ChatRepository> { ChatRepositoryImpl(get()) }
@@ -14,5 +17,6 @@ val chatModule = module("chat") {
 }
 
 val commonModule = module("CommonModule") {
-    //    single { FirebaseApp.getInstance()!! }
 }
+
+val appModules = listOf(chatModule, commonModule)
