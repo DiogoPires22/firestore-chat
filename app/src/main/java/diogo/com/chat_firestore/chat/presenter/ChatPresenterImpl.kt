@@ -27,10 +27,13 @@ class ChatPresenterImpl(val chatView: ChatView?, private val chatRepository: Cha
     }
 
 
-    override fun sendMessage(message: String, onComplete: (message: Message) -> Unit, onError: (throwable: Throwable) -> Unit) {
+    override fun sendMessage(message: String, onComplete: (id: String) -> Unit, onError: (throwable: Throwable) -> Unit) {
         Thread {
-            val m = Message(message = message, timestamp = Date())
-            if (chatRepository.create(m)) onComplete(m) else onError(Exception("Create Error"))
+            val m: Message? = Message(message = message, timestamp = Date())
+
+            chatRepository.create(m!!)?.let(onComplete) ?: run {
+                onError(Exception("Create Error"))
+            }
         }.start()
     }
 

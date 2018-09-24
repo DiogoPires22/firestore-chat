@@ -3,9 +3,9 @@ package diogo.com.chat_firestore.data
 
 interface Repository<T> {
     val converter: Converter<T>
-    fun create(data: T): Boolean
+    fun create(data: T): String?
     fun getAll(): List<T>
-    fun findById(id: String): T
+    fun findById(id: String): T?
 
 
     companion object {

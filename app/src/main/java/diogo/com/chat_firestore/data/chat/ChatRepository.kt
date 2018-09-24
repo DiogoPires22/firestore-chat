@@ -18,27 +18,23 @@ class ChatRepositoryImpl(override val converter: Converter<Message>) : ChatRepos
         db = FirebaseFirestore.getInstance()
     }
 
-    override fun create(data: Message): Boolean {
+    override fun create(data: Message): String? {
 
         val latch = CountDownLatch(1)
-
-        var status = false
-
-        val databaseData = converter.toDatabase(data)
-
-        db.collection(Repository.CHAT_COLLECTION).add(databaseData)
-                .addOnSuccessListener {
-                    status = true
+        val map = converter.toDatabase(data)
+        var id: String? = null
+        db.collection(Repository.CHAT_COLLECTION).add(map)
+                .addOnSuccessListener({ documentReference ->
+                    id = documentReference.id
                     latch.countDown()
-                }
-                .addOnFailureListener { e ->
-                    status = false
+                })
+                .addOnFailureListener( {
                     latch.countDown()
-                }
+                })
+
 
         latch.await()
-
-        return status
+        return id
     }
 
     override fun getAll(): List<Message> {
