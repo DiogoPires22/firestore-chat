@@ -26,7 +26,6 @@ class ChatPresenterImpl(val chatView: ChatView?, private val chatRepository: Cha
         return messageList.find { it.id == id } != null
     }
 
-
     override fun sendMessage(message: String, onComplete: (id: String) -> Unit, onError: (throwable: Throwable) -> Unit) {
         Thread {
             val m: Message? = Message(message = message, timestamp = Date())

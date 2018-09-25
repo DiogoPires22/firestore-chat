@@ -1,5 +1,6 @@
 package diogo.com.chat_firestore.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import diogo.com.chat_firestore.AbstractActivity
@@ -7,6 +8,7 @@ import diogo.com.chat_firestore.BaseView
 import diogo.com.chat_firestore.R
 import diogo.com.chat_firestore.auth.presenter.AuthPresenter
 import diogo.com.chat_firestore.auth.view.AuthView
+import diogo.com.chat_firestore.chat.view.ChatActivity
 import kotlinx.android.synthetic.main.activity_auth.*
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
@@ -37,7 +39,9 @@ class AuthActivity : AbstractActivity(), AuthView {
     }
 
     override fun finishLogin() {
-        applicationContext.
+        val intent = Intent(applicationContext, ChatActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        applicationContext.startActivity(intent)
     }
 
     private fun configLoginFlow() {
@@ -48,9 +52,9 @@ class AuthActivity : AbstractActivity(), AuthView {
 
                 submitSafeThread {
                     presenter.login(user, {
-
+                        finishLogin()
                     }, {
-
+                        showMessage(it.message ?: it.localizedMessage)
                     })
                 }
             }
